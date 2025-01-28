@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5K Prediction Time Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>5K Prediction Time Calculator</h2>
+        <label for="age">Age:</label>
+        <input type="number" id="age" placeholder="Enter age" required>
+
+        <label for="gender">Gender:</label>
+        <select id="gender" required>
+            <option value="">Select gender</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+        </select>
+
+        <label for="vo2max">VO₂ Max:</label>
+        <input type="number" id="vo2max" step="0.1" placeholder="Enter VO₂ Max" required>
+
+        <button onclick="calculate5KTime()">Calculate 5K Time</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculate5KTime() {
+            const age = parseInt(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
+            const vo2max = parseFloat(document.getElementById('vo2max').value);
+
+            if (!age || !gender || !vo2max) {
+                document.getElementById('result').textContent = "Please fill out all fields correctly.";
+                return;
+            }
+
+            // Performance factor based on gender
+            let performanceFactor;
+            if (gender === "female") {
+                performanceFactor = 0.1825; // Female performance factor
+            } else if (gender === "male") {
+                performanceFactor = 0.1985; // Male performance factor
+            } else {
+                document.getElementById('result').textContent = "Invalid gender selected.";
+                return;
+            }
+
+            const constant = 3.5; // Constant for 5K calculation
+
+            // Adjusted VO2 Max
+            const adjustedVo2Max = vo2max - constant;
+
+            if (adjustedVo2Max <= 0) {
+                document.getElementById('result').textContent = "Invalid VO₂ Max value. Please provide a realistic input.";
+                return;
+            }
+
+            // Correct calculation for velocity (m/s)
+            const velocity = adjustedVo2Max * performanceFactor;
+
+            // Correct calculation for time in seconds for 5K
+            const timeInSeconds = 5000 / velocity;
+
+            // Ensure realistic output based on adjusted logic
+            if (timeInSeconds <= 0 || isNaN(timeInSeconds)) {
+                document.getElementById('result').textContent = "Error in calculation. Please check inputs.";
+                return;
+            }
+
+            // Convert seconds to mm:ss format
+            const minutes = Math.floor(timeInSeconds / 60);
+            const seconds = Math.round(timeInSeconds % 60).toString().padStart(2, '0');
+
+            // Display the result
+            document.getElementById('result').textContent = `Predicted 5K Time: ${minutes}:${seconds} (mm:ss)`;
+        }
+    </script>
+</body>
+</html>

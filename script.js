@@ -3,7 +3,7 @@
 
 /**
  * Function to predict 5K time based on VO2 max, gender, and age.
- * Uses Jack Daniels' methodology with realistic pace scaling.
+ * Uses Jack Daniels' methodology with refined pace scaling.
  * @param {number} vo2Max - The VO2 max score.
  * @param {string} gender - The gender of the runner ('male' or 'female').
  * @param {number} age - The age of the runner.
@@ -12,19 +12,19 @@
 function predict5KTime(vo2Max, gender, age) {
   const GENDER_MULTIPLIER = {
     male: 1.0,
-    female: 0.92 // Adjusted gender performance multiplier
+    female: 0.94 // Adjusted gender performance multiplier
   };
 
   // Adjust VO2 max for gender
   let adjustedVO2 = vo2Max * (GENDER_MULTIPLIER[gender.toLowerCase()] || 1.0);
 
-  // Apply age adjustment (VO2 max declines ~0.5% per year after 30, capped at 80% of original value)
+  // Apply age adjustment (VO2 max declines ~0.3% per year after 30, capped at 85% of original value)
   if (age > 30) {
-    adjustedVO2 *= Math.max(1 - ((age - 30) * 0.005), 0.8);
+    adjustedVO2 *= Math.max(1 - ((age - 30) * 0.003), 0.85);
   }
 
   // Jack Daniels' VO2 max to running performance model
-  const VO2_AT_5K_PACE = 54; // Adjusted for more accurate trained runner pace
+  const VO2_AT_5K_PACE = 58; // Adjusted for more accurate trained runner pace
   const BASE_5K_TIME_SECONDS = 1365; // 22:45 min for adjusted trained runners
 
   // Adjusted 5K time based on performance scaling

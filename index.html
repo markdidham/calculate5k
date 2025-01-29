@@ -1,3 +1,6 @@
+// Alternative Implementation Using Static JavaScript (No Server Required)
+// This script can be embedded directly into an HTML file or Google Sites
+
 /**
  * Function to predict 5K time based on VO2 max, gender, and age using Jack Daniels' methodology.
  * @param {number} vo2Max - The VO2 max score.
@@ -15,7 +18,6 @@ function predict5KTime(vo2Max, gender, age) {
   let adjustedVO2 = vo2Max * (GENDER_MULTIPLIER[gender.toLowerCase()] || 1.0);
 
   // Apply age adjustment (VO2 max tends to decrease with age)
-  // This factor is a simplified estimation: ~1% decline per year after 30
   if (age > 30) {
     const ageAdjustmentFactor = 1 - ((age - 30) * 0.01);
     adjustedVO2 *= Math.max(ageAdjustmentFactor, 0.7); // Cap at 70% for extreme ages
@@ -40,38 +42,41 @@ function predict5KTime(vo2Max, gender, age) {
 }
 
 // HTML and JavaScript for embedding in a static site or Google Sites
-document.write(`
-  <div style="font-family: Arial, sans-serif; margin: 20px;">
-    <h3>5K Time Predictor v2</h3>
-    <label for="vo2Max">VO2 Max:</label>
-    <input type="number" id="vo2Max" placeholder="Enter VO2 Max" step="0.1" style="margin-bottom: 10px;">
-    <br>
-    <label for="age">Age:</label>
-    <input type="number" id="age" placeholder="Enter Age" style="margin-bottom: 10px;">
-    <br>
-    <label for="gender">Gender:</label>
-    <select id="gender" style="margin-bottom: 10px;">
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-    </select>
-    <br>
-    <button onclick="calculatePrediction()">Predict 5K Time</button>
-    <p id="result" style="margin-top: 20px; font-weight: bold;"></p>
-  </div>
+function renderUI() {
+  document.body.innerHTML = `
+    <div style="font-family: Arial, sans-serif; margin: 20px;">
+      <h3>5K Time Predictor</h3>
+      <label for="vo2Max">VO2 Max:</label>
+      <input type="number" id="vo2Max" placeholder="Enter VO2 Max" step="0.1" style="margin-bottom: 10px;">
+      <br>
+      <label for="age">Age:</label>
+      <input type="number" id="age" placeholder="Enter Age" style="margin-bottom: 10px;">
+      <br>
+      <label for="gender">Gender:</label>
+      <select id="gender" style="margin-bottom: 10px;">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+      <br>
+      <button id="calculateButton">Predict 5K Time</button>
+      <p id="result" style="margin-top: 20px; font-weight: bold;"></p>
+    </div>
+  `;
 
-  <script>
-    function calculatePrediction() {
-      const vo2Max = parseFloat(document.getElementById('vo2Max').value);
-      const age = parseInt(document.getElementById('age').value);
-      const gender = document.getElementById('gender').value;
+  document.getElementById('calculateButton').addEventListener('click', function() {
+    const vo2Max = parseFloat(document.getElementById('vo2Max').value);
+    const age = parseInt(document.getElementById('age').value);
+    const gender = document.getElementById('gender').value;
 
-      if (!vo2Max || isNaN(vo2Max) || !age || isNaN(age) || !gender) {
-        document.getElementById('result').textContent = 'Please provide valid inputs for VO2 Max, age, and gender.';
-        return;
-      }
-
-      const predictedTime = predict5KTime(vo2Max, gender, age);
-      document.getElementById('result').textContent = `Predicted 5K Time: ${predictedTime}`;
+    if (!vo2Max || isNaN(vo2Max) || !age || isNaN(age) || !gender) {
+      document.getElementById('result').textContent = 'Please provide valid inputs for VO2 Max, age, and gender.';
+      return;
     }
-  </script>
-`);
+
+    const predictedTime = predict5KTime(vo2Max, gender, age);
+    document.getElementById('result').textContent = `Predicted 5K Time: ${predictedTime}`;
+  });
+}
+
+// Render the UI when the script loads
+renderUI();

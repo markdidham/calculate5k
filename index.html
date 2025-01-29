@@ -2,7 +2,7 @@
 // This script can be embedded directly into an HTML file or Google Sites
 
 /**
- * Function to predict 5K time based on VO2 max and gender using refined Jack Daniels' methodology.
+ * Function to predict 5K time based on VO2 max and gender using Jack Daniels' methodology.
  * @param {number} vo2Max - The VO2 max score.
  * @param {string} gender - The gender of the runner ('male' or 'female').
  * @returns {string} - Predicted 5K time in HH:MM:SS format.
@@ -10,23 +10,21 @@
 function predict5KTime(vo2Max, gender) {
   const GENDER_MULTIPLIER = {
     male: 1.0,
-    female: 0.85 // Adjustment for gender performance differences
+    female: 0.85 // Gender performance adjustment
   };
 
   // Adjust VO2 max for gender
   const adjustedVO2 = vo2Max * (GENDER_MULTIPLIER[gender.toLowerCase()] || 1.0);
 
-  // Empirical factor for VO2 at 5K pace (VO2 max required for ~3:30 min/km pace)
-  const VO2_AT_5K_PACE = 62; // VO2 required for a very fast runner's 5K pace
+  // Jack Daniels' empirical VO2 max to race time conversion
+  const VO2_AT_5K_PACE = 62; // VO2 max required for an elite-level 5K pace
+  const ELITE_5K_TIME_SECONDS = 1050; // 17:30 min for elite runners
 
-  // Adjusted ratio for scaling velocity (approximation for typical runners)
+  // Scale velocity ratio based on VO2 max
   const velocityRatio = adjustedVO2 / VO2_AT_5K_PACE;
 
-  // Elite 5K time (in seconds) at ~3:30 min/km for 5K (1050 seconds or 17:30)
-  const elite5KTimeSeconds = 1050;
-
-  // Adjust 5K time based on velocity ratio
-  const predictedTimeSeconds = elite5KTimeSeconds / velocityRatio;
+  // Adjusted 5K time based on real-world race performances
+  const predictedTimeSeconds = ELITE_5K_TIME_SECONDS / velocityRatio;
 
   // Convert to HH:MM:SS format
   const hours = Math.floor(predictedTimeSeconds / 3600);
@@ -58,7 +56,7 @@ document.write(`
       const vo2Max = parseFloat(document.getElementById('vo2Max').value);
       const gender = document.getElementById('gender').value;
 
-      if (!vo2Max || !gender) {
+      if (!vo2Max || isNaN(vo2Max) || !gender) {
         document.getElementById('result').textContent = 'Please provide valid inputs for VO2 Max and gender.';
         return;
       }

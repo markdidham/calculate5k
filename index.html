@@ -1,8 +1,9 @@
-// Alternative Implementation Using Static JavaScript (No Server Required)
-// This script can be embedded directly into an HTML file or Google Sites
+// Improved 5K Time Predictor using Jack Daniels' Formula
+// Optimized for GitHub Pages Hosting
 
 /**
- * Function to predict 5K time based on VO2 max, gender, and age using Jack Daniels' methodology.
+ * Function to predict 5K time based on VO2 max, gender, and age.
+ * Uses Jack Daniels' methodology with realistic pace scaling.
  * @param {number} vo2Max - The VO2 max score.
  * @param {string} gender - The gender of the runner ('male' or 'female').
  * @param {number} age - The age of the runner.
@@ -11,27 +12,23 @@
 function predict5KTime(vo2Max, gender, age) {
   const GENDER_MULTIPLIER = {
     male: 1.0,
-    female: 0.85 // Gender performance adjustment
+    female: 0.88 // Gender performance adjustment
   };
 
   // Adjust VO2 max for gender
   let adjustedVO2 = vo2Max * (GENDER_MULTIPLIER[gender.toLowerCase()] || 1.0);
 
-  // Apply age adjustment (VO2 max tends to decrease with age)
+  // Apply age adjustment (VO2 max declines ~1% per year after 30)
   if (age > 30) {
-    const ageAdjustmentFactor = 1 - ((age - 30) * 0.01);
-    adjustedVO2 *= Math.max(ageAdjustmentFactor, 0.7); // Cap at 70% for extreme ages
+    adjustedVO2 *= Math.max(1 - ((age - 30) * 0.01), 0.7); // Cap reduction at 70%
   }
 
   // Jack Daniels' empirical VO2 max to race time conversion
-  const VO2_AT_5K_PACE = 62; // VO2 max required for an elite-level 5K pace
+  const VO2_AT_5K_PACE = 62; // VO2 max required for an elite 5K pace (~3:30 min/km)
   const ELITE_5K_TIME_SECONDS = 1050; // 17:30 min for elite runners
 
-  // Scale velocity ratio based on VO2 max
-  const velocityRatio = adjustedVO2 / VO2_AT_5K_PACE;
-
-  // Adjusted 5K time based on real-world race performances
-  const predictedTimeSeconds = ELITE_5K_TIME_SECONDS / velocityRatio;
+  // Adjusted 5K time based on performance scaling
+  const predictedTimeSeconds = ELITE_5K_TIME_SECONDS * (VO2_AT_5K_PACE / adjustedVO2);
 
   // Convert to HH:MM:SS format
   const hours = Math.floor(predictedTimeSeconds / 3600);
@@ -41,25 +38,25 @@ function predict5KTime(vo2Max, gender, age) {
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
-// HTML and JavaScript for embedding in a static site or Google Sites
-function renderUI() {
+// Function to render the UI
+document.addEventListener("DOMContentLoaded", function() {
   document.body.innerHTML = `
-    <div style="font-family: Arial, sans-serif; margin: 20px;">
+    <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; text-align: center;">
       <h3>5K Time Predictor</h3>
       <label for="vo2Max">VO2 Max:</label>
-      <input type="number" id="vo2Max" placeholder="Enter VO2 Max" step="0.1" style="margin-bottom: 10px;">
+      <input type="number" id="vo2Max" placeholder="Enter VO2 Max" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 10px;">
       <br>
       <label for="age">Age:</label>
-      <input type="number" id="age" placeholder="Enter Age" style="margin-bottom: 10px;">
+      <input type="number" id="age" placeholder="Enter Age" style="width: 100%; padding: 8px; margin-bottom: 10px;">
       <br>
       <label for="gender">Gender:</label>
-      <select id="gender" style="margin-bottom: 10px;">
+      <select id="gender" style="width: 100%; padding: 8px; margin-bottom: 10px;">
         <option value="male">Male</option>
         <option value="female">Female</option>
       </select>
       <br>
-      <button id="calculateButton">Predict 5K Time</button>
-      <p id="result" style="margin-top: 20px; font-weight: bold;"></p>
+      <button id="calculateButton" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Predict 5K Time</button>
+      <p id="result" style="margin-top: 20px; font-weight: bold; font-size: 16px;"></p>
     </div>
   `;
 
@@ -68,15 +65,12 @@ function renderUI() {
     const age = parseInt(document.getElementById('age').value);
     const gender = document.getElementById('gender').value;
 
-    if (!vo2Max || isNaN(vo2Max) || !age || isNaN(age) || !gender) {
-      document.getElementById('result').textContent = 'Please provide valid inputs for VO2 Max, age, and gender.';
+    if (isNaN(vo2Max) || isNaN(age) || !gender) {
+      document.getElementById('result').textContent = 'Please enter valid inputs for VO2 Max, age, and gender.';
       return;
     }
 
     const predictedTime = predict5KTime(vo2Max, gender, age);
     document.getElementById('result').textContent = `Predicted 5K Time: ${predictedTime}`;
   });
-}
-
-// Render the UI when the script loads
-renderUI();
+});

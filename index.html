@@ -1,5 +1,5 @@
-// Improved 5K Time Predictor using Jack Daniels' Formula
-// Optimized for GitHub Pages Hosting
+// 5K Time Predictor using Jack Daniels' Formula
+// Optimized for GitHub Pages and Google Sites embedding
 
 /**
  * Function to predict 5K time based on VO2 max, gender, and age.
@@ -38,27 +38,29 @@ function predict5KTime(vo2Max, gender, age) {
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
-// Function to render the UI
+// Function to create the UI and allow embedding in GitHub Pages and Google Sites
 document.addEventListener("DOMContentLoaded", function() {
-  document.body.innerHTML = `
-    <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; text-align: center;">
-      <h3>5K Time Predictor</h3>
-      <label for="vo2Max">VO2 Max:</label>
-      <input type="number" id="vo2Max" placeholder="Enter VO2 Max" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 10px;">
-      <br>
-      <label for="age">Age:</label>
-      <input type="number" id="age" placeholder="Enter Age" style="width: 100%; padding: 8px; margin-bottom: 10px;">
-      <br>
-      <label for="gender">Gender:</label>
-      <select id="gender" style="width: 100%; padding: 8px; margin-bottom: 10px;">
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>
-      <br>
-      <button id="calculateButton" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Predict 5K Time</button>
-      <p id="result" style="margin-top: 20px; font-weight: bold; font-size: 16px;"></p>
-    </div>
+  const container = document.createElement("div");
+  container.style.cssText = "font-family: Arial, sans-serif; max-width: 400px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; text-align: center;";
+  container.innerHTML = `
+    <h3>5K Time Predictor 2</h3>
+    <label for="vo2Max">VO2 Max:</label>
+    <input type="number" id="vo2Max" placeholder="Enter VO2 Max" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+    <br>
+    <label for="age">Age:</label>
+    <input type="number" id="age" placeholder="Enter Age" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+    <br>
+    <label for="gender">Gender:</label>
+    <select id="gender" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+    <br>
+    <button id="calculateButton" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Predict 5K Time</button>
+    <p id="result" style="margin-top: 20px; font-weight: bold; font-size: 16px;"></p>
   `;
+
+  document.body.appendChild(container);
 
   document.getElementById('calculateButton').addEventListener('click', function() {
     const vo2Max = parseFloat(document.getElementById('vo2Max').value);

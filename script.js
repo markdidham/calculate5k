@@ -12,23 +12,23 @@
 function predict5KTime(vo2Max, gender, age) {
   const GENDER_MULTIPLIER = {
     male: 1.0,
-    female: 0.88 // Gender performance adjustment
+    female: 0.92 // Adjusted gender performance multiplier
   };
 
   // Adjust VO2 max for gender
   let adjustedVO2 = vo2Max * (GENDER_MULTIPLIER[gender.toLowerCase()] || 1.0);
 
-  // Apply age adjustment (VO2 max declines ~1% per year after 30)
+  // Apply age adjustment (VO2 max declines ~0.5% per year after 30, capped at 80% of original value)
   if (age > 30) {
-    adjustedVO2 *= Math.max(1 - ((age - 30) * 0.01), 0.7); // Cap reduction at 70%
+    adjustedVO2 *= Math.max(1 - ((age - 30) * 0.005), 0.8);
   }
 
-  // Jack Daniels' empirical VO2 max to race time conversion
-  const VO2_AT_5K_PACE = 62; // VO2 max required for an elite 5K pace (~3:30 min/km)
-  const ELITE_5K_TIME_SECONDS = 1050; // 17:30 min for elite runners
+  // Jack Daniels' VO2 max to running performance model
+  const VO2_AT_5K_PACE = 54; // Adjusted for more accurate trained runner pace
+  const BASE_5K_TIME_SECONDS = 1365; // 22:45 min for adjusted trained runners
 
   // Adjusted 5K time based on performance scaling
-  const predictedTimeSeconds = ELITE_5K_TIME_SECONDS * (VO2_AT_5K_PACE / adjustedVO2);
+  const predictedTimeSeconds = BASE_5K_TIME_SECONDS * (VO2_AT_5K_PACE / adjustedVO2);
 
   // Convert to HH:MM:SS format
   const hours = Math.floor(predictedTimeSeconds / 3600);
